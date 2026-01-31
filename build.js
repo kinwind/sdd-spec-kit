@@ -1,9 +1,17 @@
-<!DOCTYPE html>
+const fs = require('fs');
+const path = require('path');
+
+// --- Configuration ---
+const SITE_TITLE = "Spec Kit 實戰手冊";
+const OUT_DIR = "/home/kinwind/.openclaw/workspace/sdd-spec-kit";
+
+// --- Layout Template ---
+const template = (title, content, activePage) => `<!DOCTYPE html>
 <html lang="zh-TW" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>實戰演練 | Spec Kit 實戰手冊</title>
+    <title>${title} | ${SITE_TITLE}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -110,16 +118,7 @@
     <!-- Mobile Menu Overlay -->
     <div x-show="mobileMenuOpen" class="fixed inset-0 z-40 bg-black lg:hidden" x-transition.opacity>
         <div class="p-6 pt-20">
-            
-        <div class="space-y-8">
-            <div>
-                <div class="text-[11px] text-[#555] font-semibold mb-3 uppercase tracking-widest pl-2">Guide</div>
-                <ul class="space-y-1">
-                    <li><a href="index.html" class="nav-link ">核心概念</a></li><li><a href="tools.html" class="nav-link ">工具指南</a></li><li><a href="workflow.html" class="nav-link active">實戰演練</a></li><li><a href="faq.html" class="nav-link ">FAQ</a></li>
-                </ul>
-            </div>
-        </div>
-    
+            ${renderNav(activePage)}
         </div>
         <button @click="mobileMenuOpen = false" class="absolute top-4 right-6 text-white p-2">✕</button>
     </div>
@@ -130,22 +129,129 @@
             <div class="w-3 h-3 bg-white rounded-full"></div>
             <span class="font-medium text-white tracking-tight">Spec Kit Guide</span>
         </div>
-        
-        <div class="space-y-8">
-            <div>
-                <div class="text-[11px] text-[#555] font-semibold mb-3 uppercase tracking-widest pl-2">Guide</div>
-                <ul class="space-y-1">
-                    <li><a href="index.html" class="nav-link ">核心概念</a></li><li><a href="tools.html" class="nav-link ">工具指南</a></li><li><a href="workflow.html" class="nav-link active">實戰演練</a></li><li><a href="faq.html" class="nav-link ">FAQ</a></li>
-                </ul>
-            </div>
-        </div>
-    
+        ${renderNav(activePage)}
     </aside>
 
     <!-- Main Content Wrapper -->
     <main class="flex-1 lg:pl-64 bg-black min-h-screen w-full">
         <div class="max-w-4xl mx-auto px-6 py-12 lg:py-24">
+            ${content}
             
+            <footer class="mt-32 pt-8 border-t border-[#262626] flex justify-between text-sm text-[#555]">
+                <span>© 2026 Spec Kit Guide</span>
+                <div class="flex gap-4">
+                    ${renderFooterNav(activePage)}
+                </div>
+            </footer>
+        </div>
+    </main>
+
+    <script>hljs.highlightAll();</script>
+</body>
+</html>`;
+
+// --- Helper Functions ---
+function renderNav(active) {
+    const links = [
+        { id: 'index', title: '核心概念', href: 'index.html' },
+        { id: 'tools', title: '工具指南', href: 'tools.html' },
+        { id: 'workflow', title: '實戰演練', href: 'workflow.html' },
+        { id: 'faq', title: 'FAQ', href: 'faq.html' }
+    ];
+    return `
+        <div class="space-y-8">
+            <div>
+                <div class="text-[11px] text-[#555] font-semibold mb-3 uppercase tracking-widest pl-2">Guide</div>
+                <ul class="space-y-1">
+                    ${links.map(l => `<li><a href="${l.href}" class="nav-link ${active === l.id ? 'active' : ''}">${l.title}</a></li>`).join('')}
+                </ul>
+            </div>
+        </div>
+    `;
+}
+
+function renderFooterNav(active) {
+    const order = ['index', 'tools', 'workflow', 'faq'];
+    const idx = order.indexOf(active);
+    let html = '';
+    if (idx > 0) html += `<a href="${order[idx-1]}.html" class="hover:text-white">← Prev</a>`;
+    if (idx < order.length - 1) html += `<a href="${order[idx+1]}.html" class="hover:text-white">Next →</a>`;
+    return html;
+}
+
+// --- Content Definitions ---
+
+const pages = {
+    index: {
+        title: "核心概念",
+        content: `
+            <header class="mb-20">
+                <h1 class="text-4xl lg:text-5xl mb-6 tracking-tight">Spec-Driven Development</h1>
+                <p class="text-xl font-light text-[#888] leading-relaxed">將軟體規格轉化為可執行的藍圖。<br>讓 AI 助手精準實作，消滅不確定性。</p>
+            </header>
+            <section class="space-y-16">
+                <div>
+                    <h2 class="text-2xl text-white mb-4 mt-0">什麼是 SDD？</h2>
+                    <p>規格驅動開發 (SDD) 是一種顛覆傳統的協作模式。在傳統流程中，程式碼是主角；但在 SDD 中，規格書 (Spec) 才是唯一的真理。</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3 class="text-lg text-white mb-3 mt-0">規格即真相</h3>
+                        <p class="text-sm text-[#888] mb-0">所有實作必須嚴格遵守 <code>spec.md</code>。若代碼與規格不符，則代碼是錯誤的。</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-lg text-white mb-3 mt-0">AI 友善開發</h3>
+                        <p class="text-sm text-[#888] mb-0">透過標準化的結構，讓 AI 能 100% 理解需求，實現精準的自動化編碼。</p>
+                    </div>
+                </div>
+            </section>
+        `
+    },
+    tools: {
+        title: "工具指南",
+        content: `
+            <header class="mb-20 border-b border-[#262626] pb-8">
+                <h1 class="text-3xl mb-4">工具指南</h1>
+                <p class="text-lg font-light text-[#888]">Spec Kit 是這套工作流的核心引擎。</p>
+            </header>
+            <section class="space-y-16">
+                <div>
+                    <h2 class="text-xl text-white mb-6 flex items-center gap-3 mt-0"><span class="w-1.5 h-1.5 bg-white rounded-full"></span>安裝與初始化</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <p class="mb-2 text-sm font-medium text-white">1. 使用 uv 安裝 (推薦)</p>
+                            <pre><code class="language-bash">uv tool install specify-cli --from git+https://github.com/github/spec-kit.git</code></pre>
+                        </div>
+                        <div>
+                            <p class="mb-2 text-sm font-medium text-white">2. 在專案目錄初始化</p>
+                            <pre><code class="language-bash">specify init . --ai claude --here</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h2 class="text-xl text-white mb-6 flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white rounded-full"></span>指令對照表</h2>
+                    <div class="overflow-x-auto border border-[#262626] rounded-lg">
+                        <table class="w-full text-left text-sm text-[#888]">
+                            <thead class="bg-[#111] text-white font-medium border-b border-[#262626]">
+                                <tr><th class="p-4 w-48">指令</th><th class="p-4">用途說明</th></tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#262626]">
+                                <tr><td class="p-4 font-mono text-white">/speckit.constitution</td><td class="p-4">建立專案憲法。</td></tr>
+                                <tr><td class="p-4 font-mono text-white">/speckit.specify</td><td class="p-4">描述功能需求。</td></tr>
+                                <tr><td class="p-4 font-mono text-white">/speckit.clarify</td><td class="p-4">釐清模糊需求 (必做)。</td></tr>
+                                <tr><td class="p-4 font-mono text-white">/speckit.plan</td><td class="p-4">擬定技術實作藍圖。</td></tr>
+                                <tr><td class="p-4 font-mono text-white">/speckit.tasks</td><td class="p-4">拆解細項任務。</td></tr>
+                                <tr><td class="p-4 font-mono text-white">/speckit.implement</td><td class="p-4">AI 自動撰寫程式碼。</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        `
+    },
+    workflow: {
+        title: "實戰演練",
+        content: `
             <header class="mb-16 border-b border-[#262626] pb-8">
                 <h1 class="text-3xl mb-4">實戰演練</h1>
                 <p class="text-lg font-light text-[#888]">從需求到交付的完整循環。<br><span class="text-xs mt-3 inline-block text-[#555] bg-[#111] px-2 py-1 rounded">💡 點擊流程圖節點查看說明</span></p>
@@ -233,17 +339,39 @@
                     }
                 };
             </script>
-        
-            
-            <footer class="mt-32 pt-8 border-t border-[#262626] flex justify-between text-sm text-[#555]">
-                <span>© 2026 Spec Kit Guide</span>
-                <div class="flex gap-4">
-                    <a href="tools.html" class="hover:text-white">← Prev</a><a href="faq.html" class="hover:text-white">Next →</a>
+        `
+    },
+    faq: {
+        title: "常見問題",
+        content: `
+            <header class="mb-16 border-b border-[#262626] pb-8">
+                <h1 class="text-3xl mb-4">常見問題</h1>
+                <p class="text-lg font-light text-[#888]">實務開發中的標準應對策略。</p>
+            </header>
+            <div class="space-y-8">
+                <div class="card">
+                    <h3 class="text-white text-lg mt-0 mb-2">Q: 需求頻繁「微調」怎麼辦？</h3>
+                    <p class="text-[#888] text-sm mb-0">不要開新目錄！直接修改舊的 <code>spec.md</code>，加上 <code>## v1.1 Refinement</code>，然後重跑 implement。</p>
                 </div>
-            </footer>
-        </div>
-    </main>
+                <div class="card">
+                    <h3 class="text-white text-lg mt-0 mb-2">Q: 一定要跑 clarify 嗎？</h3>
+                    <p class="text-[#888] text-sm mb-0">強烈建議！除非只是改錯字。這能確保 AI 對新需求的理解正確。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-white text-lg mt-0 mb-2">Q: 什麼時候該重頭開始？</h3>
+                    <p class="text-[#888] text-sm mb-0">當 <code>spec.md</code> 補丁多到難以維護，或更換底層架構時。</p>
+                </div>
+            </div>
+        `
+    }
+};
 
-    <script>hljs.highlightAll();</script>
-</body>
-</html>
+// --- Execution ---
+console.log("Generating site...");
+Object.keys(pages).forEach(key => {
+    const page = pages[key];
+    const html = template(page.title, page.content, key);
+    fs.writeFileSync(path.join(OUT_DIR, `${key}.html`), html);
+    console.log(`Generated ${key}.html`);
+});
+console.log("Done.");

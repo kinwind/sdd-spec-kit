@@ -3,17 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spec Kit 實戰手冊</title>
+    <title>核心概念 | Spec Kit 實戰手冊</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#000000',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#333333',
+                lineColor: '#666666',
+                secondaryColor: '#000000',
+                tertiaryColor: '#0a0a0a',
+                mainBkg: '#000000',
+                nodeBorder: '#333333',
+                clusterBkg: '#000000',
+                clusterBorder: '#333333',
+                defaultLinkColor: '#666666',
+                titleColor: '#ffffff',
+                edgeLabelBackground: '#000000',
+                nodeTextColor: '#ffffff',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '14px'
+            },
+            securityLevel: 'loose',
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'linear' }
+        });
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
         
         :root {
             --bg-page: #000000;
-            --bg-card: #0a0a0a;
+            --bg-sidebar: #050505;
             --fg-primary: #ededed;
             --fg-secondary: #a1a1a1;
-            --border-subtle: #333333;
+            --border-subtle: #262626;
             --accent: #ffffff;
         }
 
@@ -24,86 +56,127 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Linear-style Typography */
-        h1, h2, h3 { letter-spacing: -0.02em; font-weight: 500; color: var(--fg-primary); }
-        p { color: var(--fg-secondary); font-weight: 400; line-height: 1.6; }
-
-        /* Minimalist Borders */
-        .border-linear { border: 1px solid var(--border-subtle); }
-        .border-b-linear { border-bottom: 1px solid var(--border-subtle); }
+        /* Typography */
+        h1 { letter-spacing: -0.02em; font-weight: 600; color: var(--fg-primary); line-height: 1.2; }
+        h2 { letter-spacing: -0.01em; font-weight: 500; color: var(--fg-primary); margin-top: 2.5rem; margin-bottom: 1rem; }
+        h3 { letter-spacing: -0.01em; font-weight: 500; color: var(--fg-primary); margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        p, li { color: var(--fg-secondary); font-weight: 400; line-height: 1.7; letter-spacing: 0.01em; margin-bottom: 1rem; }
         
-        /* Sidebar Navigation */
+        /* Code */
+        code { font-family: 'Menlo', 'Monaco', 'Courier New', monospace; font-size: 0.85em; color: #fff; background: #222; padding: 0.2em 0.4em; border-radius: 4px; }
+        pre code { background: transparent; padding: 0; }
+        pre { background-color: #111 !important; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem; margin: 1rem 0; overflow-x: auto; }
+
+        /* Components */
         .nav-link { 
             color: var(--fg-secondary); 
-            transition: color 0.15s ease; 
+            transition: all 0.2s ease; 
             font-size: 0.9rem;
-        }
-        .nav-link:hover { color: var(--fg-primary); }
-        .active-nav { color: var(--fg-primary); font-weight: 500; }
-
-        /* Card Style */
-        .card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-subtle);
+            padding: 0.5rem 0.75rem;
             border-radius: 6px;
-            transition: border-color 0.2s;
+            display: block;
         }
-        .card:hover { border-color: #555; }
+        .nav-link:hover { color: var(--fg-primary); background-color: #1a1a1a; }
+        .nav-link.active { color: var(--fg-primary); font-weight: 500; background-color: #1a1a1a; }
+
+        .card { 
+            background-color: #0a0a0a; 
+            border: 1px solid var(--border-subtle); 
+            border-radius: 8px; 
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+        }
+        .card:hover { border-color: #444; transform: translateY(-1px); }
+
+        /* Mermaid Overrides */
+        .mermaid { background: #000; border: 1px solid var(--border-subtle); padding: 2rem; border-radius: 8px; display: flex; justify-content: center; }
+        .mermaid path { stroke: #666 !important; }
+        .mermaid .node rect, .mermaid .node circle, .mermaid .node polygon { stroke: #333 !important; fill: #000 !important; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col lg:flex-row">
+<body class="min-h-screen flex flex-col lg:flex-row" x-data="{ mobileMenuOpen: false }">
 
-    <!-- Sidebar -->
-    <aside class="w-full lg:w-64 bg-black border-r border-[#333] fixed h-full hidden lg:flex flex-col pt-8 pb-6 px-6">
-        <div class="mb-8 flex items-center gap-2">
-            <div class="w-4 h-4 bg-white rounded-full"></div>
-            <span class="font-medium tracking-tight">Spec Kit</span>
+    <!-- Mobile Header -->
+    <header class="lg:hidden sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-[#262626] px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3 bg-white rounded-full"></div>
+            <span class="font-medium text-sm text-white">Spec Kit</span>
         </div>
-        <nav class="space-y-6">
+        <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-[#888] hover:text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div x-show="mobileMenuOpen" class="fixed inset-0 z-40 bg-black lg:hidden" x-transition.opacity>
+        <div class="p-6 pt-20">
+            
+        <div class="space-y-8">
             <div>
-                <div class="text-xs text-[#555] font-medium mb-3 uppercase tracking-wider">Guide</div>
-                <ul class="space-y-2">
-                    <li><a href="index.html" class="active-nav block">核心概念</a></li>
-                    <li><a href="tools.html" class="nav-link block">工具指南</a></li>
-                    <li><a href="workflow.html" class="nav-link block">實戰演練</a></li>
-                    <li><a href="faq.html" class="nav-link block">FAQ</a></li>
+                <div class="text-[11px] text-[#555] font-semibold mb-3 uppercase tracking-widest pl-2">Guide</div>
+                <ul class="space-y-1">
+                    <li><a href="index.html" class="nav-link active">核心概念</a></li><li><a href="tools.html" class="nav-link ">工具指南</a></li><li><a href="workflow.html" class="nav-link ">實戰演練</a></li><li><a href="faq.html" class="nav-link ">FAQ</a></li>
                 </ul>
             </div>
-        </nav>
+        </div>
+    
+        </div>
+        <button @click="mobileMenuOpen = false" class="absolute top-4 right-6 text-white p-2">✕</button>
+    </div>
+
+    <!-- Desktop Sidebar -->
+    <aside class="hidden lg:flex w-64 bg-[#050505] border-r border-[#262626] flex-col fixed inset-y-0 left-0 pt-8 pb-6 px-6 overflow-y-auto">
+        <div class="mb-10 flex items-center gap-3">
+            <div class="w-3 h-3 bg-white rounded-full"></div>
+            <span class="font-medium text-white tracking-tight">Spec Kit Guide</span>
+        </div>
+        
+        <div class="space-y-8">
+            <div>
+                <div class="text-[11px] text-[#555] font-semibold mb-3 uppercase tracking-widest pl-2">Guide</div>
+                <ul class="space-y-1">
+                    <li><a href="index.html" class="nav-link active">核心概念</a></li><li><a href="tools.html" class="nav-link ">工具指南</a></li><li><a href="workflow.html" class="nav-link ">實戰演練</a></li><li><a href="faq.html" class="nav-link ">FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+    
     </aside>
 
-    <!-- Main Content -->
-    <main class="flex-1 lg:ml-64 bg-black min-h-screen">
-        <div class="max-w-3xl mx-auto px-6 py-16 lg:py-24">
-            <header class="mb-16">
-                <h1 class="text-4xl mb-6">Spec-Driven Development</h1>
-                <p class="text-xl font-light text-[#888]">將軟體規格轉化為可執行的藍圖。<br>讓 AI 助手精準實作，消滅不確定性。</p>
+    <!-- Main Content Wrapper -->
+    <main class="flex-1 lg:pl-64 bg-black min-h-screen w-full">
+        <div class="max-w-4xl mx-auto px-6 py-12 lg:py-24">
+            
+            <header class="mb-20">
+                <h1 class="text-4xl lg:text-5xl mb-6 tracking-tight">Spec-Driven Development</h1>
+                <p class="text-xl font-light text-[#888] leading-relaxed">將軟體規格轉化為可執行的藍圖。<br>讓 AI 助手精準實作，消滅不確定性。</p>
             </header>
-
-            <section class="space-y-12">
+            <section class="space-y-16">
                 <div>
-                    <h2 class="text-2xl mb-4">什麼是 SDD？</h2>
+                    <h2 class="text-2xl text-white mb-4 mt-0">什麼是 SDD？</h2>
                     <p>規格驅動開發 (SDD) 是一種顛覆傳統的協作模式。在傳統流程中，程式碼是主角；但在 SDD 中，規格書 (Spec) 才是唯一的真理。</p>
                 </div>
-
                 <div class="grid md:grid-cols-2 gap-6">
-                    <div class="card p-6">
-                        <h3 class="text-lg mb-2">規格即真相</h3>
-                        <p class="text-sm">所有實作必須嚴格遵守 <code>spec.md</code>。若代碼與規格不符，則代碼是錯誤的。</p>
+                    <div class="card">
+                        <h3 class="text-lg text-white mb-3 mt-0">規格即真相</h3>
+                        <p class="text-sm text-[#888] mb-0">所有實作必須嚴格遵守 <code>spec.md</code>。若代碼與規格不符，則代碼是錯誤的。</p>
                     </div>
-                    <div class="card p-6">
-                        <h3 class="text-lg mb-2">AI 友善開發</h3>
-                        <p class="text-sm">透過標準化的結構，讓 AI 能 100% 理解需求，實現精準的自動化編碼。</p>
+                    <div class="card">
+                        <h3 class="text-lg text-white mb-3 mt-0">AI 友善開發</h3>
+                        <p class="text-sm text-[#888] mb-0">透過標準化的結構，讓 AI 能 100% 理解需求，實現精準的自動化編碼。</p>
                     </div>
                 </div>
             </section>
-
-            <footer class="mt-24 pt-8 border-t border-[#222] flex justify-between text-sm text-[#555]">
+        
+            
+            <footer class="mt-32 pt-8 border-t border-[#262626] flex justify-between text-sm text-[#555]">
                 <span>© 2026 Spec Kit Guide</span>
-                <a href="tools.html" class="text-[#ededed] hover:underline">下一章：工具指南 →</a>
+                <div class="flex gap-4">
+                    <a href="tools.html" class="hover:text-white">Next →</a>
+                </div>
             </footer>
         </div>
     </main>
 
+    <script>hljs.highlightAll();</script>
 </body>
 </html>
