@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工具指南 | Spec Kit 實戰手冊</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --bg-page: #000000;
+            --bg-card: #0a0a0a;
+            --fg-primary: #ededed;
+            --fg-secondary: #a1a1a1;
+            --border-subtle: #333333;
+            --accent: #ffffff;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-page); 
+            color: var(--fg-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Typography - Optimized for Reading */
+        h1 { letter-spacing: -0.02em; font-weight: 600; color: var(--fg-primary); line-height: 1.2; }
+        h2, h3 { letter-spacing: -0.01em; font-weight: 500; color: var(--fg-primary); line-height: 1.4; }
+        p, li { color: var(--fg-secondary); font-weight: 400; line-height: 1.7; letter-spacing: 0.01em; }
+        code { font-family: 'Menlo', 'Monaco', 'Courier New', monospace; font-size: 0.85em; color: #fff; background: #222; padding: 0.2em 0.4em; border-radius: 4px; }
+        pre code { background: transparent; padding: 0; }
+
+        /* Minimalist Borders */
+        .border-linear { border: 1px solid var(--border-subtle); }
+        .border-b-linear { border-bottom: 1px solid var(--border-subtle); }
+        
+        /* Sidebar Navigation */
+        .nav-link { 
+            color: var(--fg-secondary); 
+            transition: all 0.2s ease; 
+            font-size: 0.9rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+        }
+        .nav-link:hover { 
+            color: var(--fg-primary); 
+            background-color: #111;
+        }
+        .active-nav { 
+            color: var(--fg-primary); 
+            font-weight: 500; 
+            background-color: #161616;
+        }
+
+        /* Table Style */
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { border-bottom: 1px solid var(--border-subtle); padding: 12px 0; color: var(--fg-primary); font-weight: 500; font-size: 0.9rem; }
+        td { border-bottom: 1px solid #1a1a1a; padding: 16px 0; color: var(--fg-secondary); font-size: 0.9rem; }
+        tr:last-child td { border-bottom: none; }
+
+        /* Code Block Style */
+        pre { background-color: #111 !important; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+
+        /* Mobile Header Blur */
+        .glass-header {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row">
+
+    <!-- Mobile Header -->
+    <header class="lg:hidden sticky top-0 z-50 glass-header px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class=\"w-3 h-3 bg-white rounded-full\"></div>
+            <span class=\"font-medium tracking-tight text-sm\">Spec Kit</span>
+        </div>
+        <button id=\"mobile-menu-btn\" class=\"p-2 text-[#888] hover:text-white\">
+            <svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg>
+        </button>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id=\"sidebar\" class=\"w-64 bg-black border-r border-[#333] fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 flex flex-col pt-8 pb-6 px-6\">
+        <div class=\"mb-10 flex items-center gap-3 hidden lg:flex\">
+            <div class=\"w-3 h-3 bg-white rounded-full\"></div>
+            <span class=\"font-medium tracking-tight\">Spec Kit</span>
+        </div>
+        <nav class=\"space-y-8 flex-1\">
+            <div>
+                <div class=\"text-[11px] text-[#555] font-semibold mb-3 uppercase tracking-widest pl-2\">Guide</div>
+                <ul class=\"space-y-1\">
+                    <li><a href=\"index.html\" class=\"nav-link block\">核心概念</a></li>
+                    <li><a href=\"tools.html\" class=\"active-nav nav-link block\">工具指南</a></li>
+                    <li><a href=\"workflow.html\" class=\"nav-link block\">實戰演練</a></li>
+                    <li><a href=\"faq.html\" class=\"nav-link block\">FAQ</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Overlay for Mobile -->
+    <div id=\"overlay\" class=\"fixed inset-0 bg-black/80 z-30 hidden backdrop-blur-sm lg:hidden\"></div>
+
+    <!-- Main Content -->
+    <main class=\"flex-1 lg:ml-64 bg-black min-h-screen\">
+        <div class=\"max-w-3xl mx-auto px-6 py-12 lg:py-24\">
+            <header class=\"mb-20 border-b border-[#222] pb-8\">
+                <h1 class=\"text-3xl mb-4\">工具指南</h1>
+                <p class=\"text-lg font-light\">Spec Kit 是這套工作流的核心引擎。透過標準化的指令，讓你的自然語言需求精準轉化為程式碼。</p>
+            </header>
+
+            <section class=\"space-y-20\">
+                <!-- Installation -->
+                <div>
+                    <h2 class=\"text-xl mb-6 flex items-center gap-3\">
+                        <span class=\"w-1.5 h-1.5 bg-white rounded-full\"></span>
+                        安裝與初始化
+                    </h2>
+                    <div class=\"space-y-8\">
+                        <div>
+                            <p class=\"mb-3 text-sm font-medium text-[#fff]\">1. 使用 uv 安裝 (推薦)</p>
+                            <pre><code class=\"language-bash\">uv tool install specify-cli --from git+https://github.com/github/spec-kit.git</code></pre>
+                        </div>
+                        <div>
+                            <p class=\"mb-3 text-sm font-medium text-[#fff]\">2. 在專案目錄初始化</p>
+                            <pre><code class=\"language-bash\">specify init . --ai claude --here</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Commands -->
+                <div>
+                    <h2 class=\"text-xl mb-6 flex items-center gap-3\">
+                        <span class=\"w-1.5 h-1.5 bg-white rounded-full\"></span>
+                        Slash 指令對照表
+                    </h2>
+                    <div class=\"overflow-x-auto\">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class=\"w-48\">指令</th>
+                                    <th>用途說明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class=\"font-mono text-white\">/speckit.constitution</td><td>建立專案憲法，定義最高指導原則與技術規範。</td></tr>
+                                <tr><td class=\"font-mono text-white\">/speckit.specify</td><td>描述功能需求與使用者故事 (User Stories)。</td></tr>
+                                <tr><td class=\"font-mono text-white\">/speckit.clarify</td><td><span class=\"text-[#888] border border-[#333] px-1.5 py-0.5 rounded text-xs mr-2\">必做</span>釐清模糊需求，確保 AI 完全理解規格。</td></tr>
+                                <tr><td class=\"font-mono text-white\">/speckit.checklist</td><td>產生驗收標準與測試清單。</td></tr>
+                                <tr><td class=\"font-mono text-white\">/speckit.plan</td><td>擬定技術實作藍圖與檔案結構。</td></tr>
+                                <tr><td class=\"font-mono text-white\">/speckit.tasks</td><td>將計畫拆解為可執行的細項任務 (TODOs)。</td></tr>
+                                <tr><td class=\"font-mono text-white\">/speckit.implement</td><td>AI 自動撰寫程式碼並完成任務。</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <footer class=\"mt-32 pt-8 border-t border-[#222] flex justify-between text-sm text-[#555]\">
+                <a href=\"index.html\" class=\"text-[#ededed] hover:underline flex items-center gap-1\">← 上一章：核心概念</a>
+                <a href=\"workflow.html\" class=\"text-[#ededed] hover:underline flex items-center gap-1\">下一章：實戰演練 →</a>
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        hljs.highlightAll();
+        
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        function toggleMenu() {
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+    </script>
+</body>
+</html>

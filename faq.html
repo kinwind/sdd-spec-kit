@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常見問題 | Spec Kit 實戰手冊</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --bg-page: #000000;
+            --bg-card: #0a0a0a;
+            --fg-primary: #ededed;
+            --fg-secondary: #a1a1a1;
+            --border-subtle: #333333;
+            --accent: #ffffff;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-page); 
+            color: var(--fg-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Typography */
+        h1, h2, h3 { letter-spacing: -0.02em; font-weight: 500; color: var(--fg-primary); }
+        p, li { color: var(--fg-secondary); font-weight: 400; line-height: 1.6; }
+
+        /* Sidebar */
+        .nav-link { color: var(--fg-secondary); transition: color 0.15s ease; font-size: 0.9rem; }
+        .nav-link:hover { color: var(--fg-primary); }
+        .active-nav { color: var(--fg-primary); font-weight: 500; }
+
+        /* Minimalist Accordion/Card */
+        .faq-item {
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 2rem 0;
+        }
+        .faq-item:first-child { padding-top: 0; }
+        .faq-question { font-size: 1.1rem; color: #fff; margin-bottom: 0.75rem; font-weight: 500; }
+        .faq-answer { color: #888; font-size: 0.95rem; }
+        .highlight { color: #fff; border-bottom: 1px solid #666; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row">
+
+    <!-- Sidebar -->
+    <aside class="w-full lg:w-64 bg-black border-r border-[#333] fixed h-full hidden lg:flex flex-col pt-8 pb-6 px-6">
+        <div class="mb-8 flex items-center gap-2">
+            <div class="w-4 h-4 bg-white rounded-full"></div>
+            <span class="font-medium tracking-tight">Spec Kit</span>
+        </div>
+        <nav class="space-y-6">
+            <div>
+                <div class="text-xs text-[#555] font-medium mb-3 uppercase tracking-wider">Guide</div>
+                <ul class="space-y-2">
+                    <li><a href="index.html" class="nav-link block">核心概念</a></li>
+                    <li><a href="tools.html" class="nav-link block">工具指南</a></li>
+                    <li><a href="workflow.html" class="nav-link block">實戰演練</a></li>
+                    <li><a href="faq.html" class="active-nav block">FAQ</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 lg:ml-64 bg-black min-h-screen">
+        <div class="max-w-3xl mx-auto px-6 py-16 lg:py-24">
+            <header class="mb-16 border-b border-[#222] pb-8">
+                <h1 class="text-3xl mb-4">常見問題</h1>
+                <p class=\"text-lg font-light text-[#888]\">針對實務開發中可能遇到的狀況，這裡整理了標準應對策略。</p>
+            </header>
+
+            <section>
+                <div class="faq-item">
+                    <h3 class="faq-question">需求頻繁「微調」怎麼辦？加一個 Feature 會不會太多？</h3>
+                    <p class="faq-answer">
+                        請勿隨意開設新目錄！針對現有功能的延伸，應直接 <span class="highlight">修改舊的 spec.md</span>。在裡面加上 <code>## v1.1 Refinement</code>，然後重新跑 <code>/speckit.implement</code>。AI 具備「增量重構」能力，會自動掃描規格差異點並僅對受影響代碼進行修補。
+                    </p>
+                </div>
+
+                <div class="faq-item">
+                    <h3 class="faq-question">手動修改 spec.md 後，一定要跑 clarify 嗎？</h3>
+                    <p class="faq-answer">
+                        強烈建議！除非只是改錯字。執行 <code>/speckit.clarify</code> 能讓 AI 確認它對「你手寫內容」的理解是否正確，並抓出隱藏的邏輯矛盾。這是確保規格與認知同步的關鍵步驟。
+                    </p>
+                </div>
+
+                <div class="faq-item">
+                    <h3 class="faq-question">什麼時候該執行「大重構」重頭開始？</h3>
+                    <p class="faq-answer">
+                        當 <code>spec.md</code> 的補丁多到連你也看不懂，或者你要更換底層架構（如從 Flask 換到 FastAPI）時。這時建議重新整理一份全新的 <code>spec.md</code>，並重啟 Step 4 (Plan) 以後的循環。
+                    </p>
+                </div>
+
+                <div class="faq-item">
+                    <h3 class="faq-question">AI 助手在 Implement 階段卡住了？</h3>
+                    <p class="faq-answer">
+                        檢查 <code>tasks.md</code> 的當前任務。你可以直接貼上報錯訊息給 AI，或手動修正目前的代碼後，告訴 AI：「任務已手動完成，請繼續下一個」。這能幫助 AI 跨過卡關點繼續執行。
+                    </p>
+                </div>
+            </section>
+
+            <footer class="mt-24 pt-8 border-t border-[#222] flex justify-between text-sm text-[#555]">
+                <a href="workflow.html" class="text-[#ededed] hover:underline">← 上一章：實戰演練</a>
+                <span>End of Guide</span>
+            </footer>
+        </div>
+    </main>
+
+</body>
+</html>

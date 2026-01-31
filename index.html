@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spec Kit 實戰手冊</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --bg-page: #000000;
+            --bg-card: #0a0a0a;
+            --fg-primary: #ededed;
+            --fg-secondary: #a1a1a1;
+            --border-subtle: #333333;
+            --accent: #ffffff;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-page); 
+            color: var(--fg-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Linear-style Typography */
+        h1, h2, h3 { letter-spacing: -0.02em; font-weight: 500; color: var(--fg-primary); }
+        p { color: var(--fg-secondary); font-weight: 400; line-height: 1.6; }
+
+        /* Minimalist Borders */
+        .border-linear { border: 1px solid var(--border-subtle); }
+        .border-b-linear { border-bottom: 1px solid var(--border-subtle); }
+        
+        /* Sidebar Navigation */
+        .nav-link { 
+            color: var(--fg-secondary); 
+            transition: color 0.15s ease; 
+            font-size: 0.9rem;
+        }
+        .nav-link:hover { color: var(--fg-primary); }
+        .active-nav { color: var(--fg-primary); font-weight: 500; }
+
+        /* Card Style */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            transition: border-color 0.2s;
+        }
+        .card:hover { border-color: #555; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row">
+
+    <!-- Sidebar -->
+    <aside class="w-full lg:w-64 bg-black border-r border-[#333] fixed h-full hidden lg:flex flex-col pt-8 pb-6 px-6">
+        <div class="mb-8 flex items-center gap-2">
+            <div class="w-4 h-4 bg-white rounded-full"></div>
+            <span class="font-medium tracking-tight">Spec Kit</span>
+        </div>
+        <nav class="space-y-6">
+            <div>
+                <div class="text-xs text-[#555] font-medium mb-3 uppercase tracking-wider">Guide</div>
+                <ul class="space-y-2">
+                    <li><a href="index.html" class="active-nav block">核心概念</a></li>
+                    <li><a href="tools.html" class="nav-link block">工具指南</a></li>
+                    <li><a href="workflow.html" class="nav-link block">實戰演練</a></li>
+                    <li><a href="faq.html" class="nav-link block">FAQ</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 lg:ml-64 bg-black min-h-screen">
+        <div class="max-w-3xl mx-auto px-6 py-16 lg:py-24">
+            <header class="mb-16">
+                <h1 class="text-4xl mb-6">Spec-Driven Development</h1>
+                <p class="text-xl font-light text-[#888]">將軟體規格轉化為可執行的藍圖。<br>讓 AI 助手精準實作，消滅不確定性。</p>
+            </header>
+
+            <section class="space-y-12">
+                <div>
+                    <h2 class="text-2xl mb-4">什麼是 SDD？</h2>
+                    <p>規格驅動開發 (SDD) 是一種顛覆傳統的協作模式。在傳統流程中，程式碼是主角；但在 SDD 中，規格書 (Spec) 才是唯一的真理。</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card p-6">
+                        <h3 class="text-lg mb-2">規格即真相</h3>
+                        <p class="text-sm">所有實作必須嚴格遵守 <code>spec.md</code>。若代碼與規格不符，則代碼是錯誤的。</p>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-lg mb-2">AI 友善開發</h3>
+                        <p class="text-sm">透過標準化的結構，讓 AI 能 100% 理解需求，實現精準的自動化編碼。</p>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="mt-24 pt-8 border-t border-[#222] flex justify-between text-sm text-[#555]">
+                <span>© 2026 Spec Kit Guide</span>
+                <a href="tools.html" class="text-[#ededed] hover:underline">下一章：工具指南 →</a>
+            </footer>
+        </div>
+    </main>
+
+</body>
+</html>

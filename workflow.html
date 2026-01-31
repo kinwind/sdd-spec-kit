@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>實戰演練 | Spec Kit 實戰手冊</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#000000',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#333333',
+                lineColor: '#666666',
+                secondaryColor: '#000000',
+                tertiaryColor: '#0a0a0a',
+                mainBkg: '#000000',
+                nodeBorder: '#333333',
+                clusterBkg: '#000000',
+                clusterBorder: '#333333',
+                defaultLinkColor: '#666666',
+                titleColor: '#ffffff',
+                edgeLabelBackground: '#000000',
+                nodeTextColor: '#ffffff',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '14px'
+            },
+            securityLevel: 'loose',
+            flowchart: { 
+                useMaxWidth: true, 
+                htmlLabels: true, 
+                curve: 'linear'
+            }
+        });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --bg-page: #000000;
+            --bg-card: #0a0a0a;
+            --fg-primary: #ededed;
+            --fg-secondary: #a1a1a1;
+            --border-subtle: #333333;
+            --accent: #ffffff;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-page); 
+            color: var(--fg-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Typography */
+        h1 { letter-spacing: -0.02em; font-weight: 600; color: var(--fg-primary); line-height: 1.2; }
+        h2, h3 { letter-spacing: -0.01em; font-weight: 500; color: var(--fg-primary); line-height: 1.4; }
+        p, li { color: var(--fg-secondary); font-weight: 400; line-height: 1.7; letter-spacing: 0.01em; }
+
+        /* Minimalist Borders */
+        .border-linear { border: 1px solid var(--border-subtle); }
+        .border-b-linear { border-bottom: 1px solid var(--border-subtle); }
+        
+        /* Sidebar Navigation */
+        .nav-link { 
+            color: var(--fg-secondary); 
+            transition: all 0.2s ease; 
+            font-size: 0.9rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+        }
+        .nav-link:hover { 
+            color: var(--fg-primary); 
+            background-color: #111;
+        }
+        .active-nav { 
+            color: var(--fg-primary); 
+            font-weight: 500; 
+            background-color: #161616;
+        }
+
+        /* Mermaid Minimalist Overrides */
+        .mermaid {
+            background-color: #000;
+            border: 1px solid #222;
+            padding: 3rem 2rem;
+            display: flex;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        /* Force high contrast lines */
+        .mermaid path { stroke: #666 !important; stroke-width: 1px !important; }
+        .mermaid .node rect, .mermaid .node circle, .mermaid .node polygon { 
+            stroke: #333 !important; 
+            stroke-width: 1px !important;
+            fill: #000 !important;
+        }
+        
+        /* Mobile Header Blur */
+        .glass-header {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* Info Drawer Animation */
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row" x-data="{ 
+    activeStep: null,
+    steps: {
+        'Const': { title: '定義憲法', desc: '專案的最高指導原則。約定技術堆疊、測試規範與 Log 紀錄方式。', cmd: '/speckit.constitution' },
+        'Spec': { title: '撰寫規格', desc: '詳細描述功能需求與使用者故事 (User Stories)。', cmd: '/speckit.specify' },
+        'Clarify': { title: '需求釐清', desc: 'AI 主動提問，消除規格中的模糊地帶。這是 SDD 最關鍵的一步。', cmd: '/speckit.clarify' },
+        'Checklist': { title: '品質檢查', desc: '產生驗收標準與測試清單，確保需求完整性。', cmd: '/speckit.checklist' },
+        'Plan': { title: '技術規劃', desc: '擬定實作路徑、檔案結構與技術選型。', cmd: '/speckit.plan' },
+        'Tasks': { title: '任務拆解', desc: '將大計畫拆解為可執行的細項任務 (TODOs)。', cmd: '/speckit.tasks' },
+        'Implement': { title: '自動實作', desc: 'AI 根據任務清單自動撰寫程式碼。', cmd: '/speckit.implement' },
+        'Review': { title: 'Demo 與測試', desc: '人工驗證功能是否符合預期。若有問題則進入迭代循環。', cmd: 'Manual Review' }
+    }
+}">
+
+    <!-- Mobile Header -->
+    <header class="lg:hidden sticky top-0 z-50 glass-header px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3 bg-white rounded-full"></div>
+            <span class="font-medium tracking-tight text-sm">Spec Kit</span>
+        </div>
+        <button id="mobile-menu-btn" class="p-2 text-[#888] hover:text-white">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg>
+        </button>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 bg-black border-r border-[#333] fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 flex flex-col pt-8 pb-6 px-6">
+        <div class="mb-10 flex items-center gap-3 hidden lg:flex">
+            <div class="w-3 h-3 bg-white rounded-full"></div>
+            <span class="font-medium tracking-tight">Spec Kit</span>
+        </div>
+        <nav class="space-y-8 flex-1">
+            <div>
+                <div class="text-[11px] text-[#555] font-semibold mb-3 uppercase tracking-widest pl-2">Guide</div>
+                <ul class="space-y-1">
+                    <li><a href="index.html" class="nav-link block">核心概念</a></li>
+                    <li><a href="tools.html" class="nav-link block">工具指南</a></li>
+                    <li><a href="workflow.html" class="active-nav block">實戰演練</a></li>
+                    <li><a href="faq.html" class="nav-link block">FAQ</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Overlay for Mobile -->
+    <div id="overlay" class="fixed inset-0 bg-black/80 z-30 hidden backdrop-blur-sm lg:hidden"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 lg:ml-64 bg-black min-h-screen relative">
+        <div class="max-w-4xl mx-auto px-6 py-12 lg:py-24">
+            <header class="mb-16 border-b border-[#222] pb-8">
+                <h1 class="text-3xl mb-4">實戰演練</h1>
+                <p class="text-lg font-light text-[#888]">
+                    以「股市即時通知器」為例，展示從初步需求到不斷迭代的完整生命週期。<br>
+                    <span class="text-xs mt-3 inline-block text-[#555] bg-[#111] px-2 py-1 rounded">💡 點擊下方流程圖的節點查看說明</span>
+                </p>
+            </header>
+
+            <!-- Interactive Diagram Section -->
+            <div class="relative group mb-20">
+                <div class="mermaid cursor-pointer select-none">
+                    graph TD
+                        %% Nodes
+                        Start((開始項目))
+                        Const[/"定義憲法"/]
+                        Spec[/"撰寫規格"/]
+                        Clarify{"需求釐清"}
+                        Checklist[/"品質檢查"/]
+                        Plan[/"技術規劃"/]
+                        Tasks[/"任務拆解"/]
+                        Implement[/"自動實作"/]
+                        Review(("Demo<br/>與測試"))
+                        Done((完成開發))
+                        Loop1["手動修正<br/>spec.md"]
+
+                        %% Flow
+                        Start --> Const
+                        Const --> Spec
+                        Spec --> Clarify
+                        
+                        Clarify -- "仍有模糊" --> Spec
+                        Clarify -- "完全對齊" --> Checklist
+                        
+                        Checklist --> Plan
+                        Plan --> Tasks
+                        Tasks --> Implement
+                        Implement --> Review
+                        
+                        Review -- "正常運作" --> Done
+                        Review -- "需求微調" --> Loop1
+                        Loop1 --> Clarify
+
+                        %% Click Events
+                        click Const call showStep('Const')
+                        click Spec call showStep('Spec')
+                        click Clarify call showStep('Clarify')
+                        click Checklist call showStep('Checklist')
+                        click Plan call showStep('Plan')
+                        click Tasks call showStep('Tasks')
+                        click Implement call showStep('Implement')
+                        click Review call showStep('Review')
+                </div>
+            </div>
+
+            <!-- Iteration Case -->
+            <div id="real-case">
+                <h2 class="text-xl mb-6 flex items-center gap-3">
+                    <span class="w-1.5 h-1.5 bg-white rounded-full"></span>
+                    循環迭代案例
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#222] border border-[#222] rounded-lg overflow-hidden">
+                    <div class="bg-[#0a0a0a] p-8 hover:bg-[#111] transition-colors duration-200">
+                        <div class="text-[#fff] text-sm font-medium mb-2">1. 更新規格</div>
+                        <p class="text-[#666] text-sm leading-relaxed">手動修改 <code>spec.md</code>，加入新功能需求。</p>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-8 hover:bg-[#111] transition-colors duration-200">
+                        <div class="text-[#fff] text-sm font-medium mb-2">2. 再次釐清</div>
+                        <p class="text-[#666] text-sm leading-relaxed">執行 <code>/speckit.clarify</code>，讓 AI 確認細節。</p>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-8 hover:bg-[#111] transition-colors duration-200">
+                        <div class="text-[#fff] text-sm font-medium mb-2">3. 同步實作</div>
+                        <p class="text-[#666] text-sm leading-relaxed">再次執行 <code>/speckit.implement</code>，AI 精準插入代碼。</p>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-8 hover:bg-[#111] transition-colors duration-200">
+                        <div class="text-[#fff] text-sm font-medium mb-2">4. 交付</div>
+                        <p class="text-[#666] text-sm leading-relaxed">代碼與規格始終同步，維護性極高。</p>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="mt-32 pt-8 border-t border-[#222] flex justify-between text-sm text-[#555]">
+                <a href="tools.html" class="text-[#ededed] hover:underline flex items-center gap-1">← 上一章：工具指南</a>
+                <a href="faq.html" class="text-[#ededed] hover:underline flex items-center gap-1">下一章：常見問題 →</a>
+            </footer>
+        </div>
+
+        <!-- Info Drawer -->
+        <div x-show="activeStep" 
+             x-transition:enter="transition ease-out duration-300 cubic-bezier(0.16, 1, 0.3, 1)"
+             x-transition:enter-start="opacity-0 translate-y-8"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200 cubic-bezier(0.16, 1, 0.3, 1)"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-8"
+             class="fixed bottom-6 left-6 right-6 lg:left-[calc(16rem+1.5rem)] lg:right-6 pointer-events-none z-50" x-cloak>
+            
+            <div class="bg-[#111] border border-[#333] p-6 rounded-lg shadow-2xl max-w-xl mx-auto pointer-events-auto relative">
+                <button @click="activeStep = null" class="absolute top-4 right-4 text-[#555] hover:text-white transition-colors">✕</button>
+                <template x-if="activeStep">
+                    <div>
+                        <div class="text-[10px] text-[#555] uppercase tracking-widest font-semibold mb-3">Step Detail</div>
+                        <h3 class="text-lg text-white font-medium mb-2" x-text="steps[activeStep].title"></h3>
+                        <p class="text-[#888] text-sm mb-4 leading-relaxed" x-text="steps[activeStep].desc"></p>
+                        <div class="inline-block bg-[#1a1a1a] text-[#ddd] text-xs font-mono px-2 py-1.5 rounded border border-[#333]" x-text="steps[activeStep].cmd"></div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        function toggleMenu() {
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        window.showStep = function(stepId) {
+            const el = document.querySelector('body');
+            if (el && el.__x) el.__x.$data.activeStep = stepId;
+        };
+    </script>
+</body>
+</html>
